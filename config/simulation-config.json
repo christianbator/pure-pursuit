@@ -1,0 +1,4 @@
+{
+    "control_frequency": 50,
+    "avg_abs_cross_track_error_threshold": 0.01
+}

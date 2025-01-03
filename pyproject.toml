@@ -1,0 +1,38 @@
+#
+# pyproject.toml
+# pure-pursuit
+#
+# Created by Christian Bator on 01/02/2025
+#
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pure-pursuit"
+description = "Pure Pursuit implementation in Python"
+readme = "README.md"
+version = "1.0.0"
+requires-python = ">= 3.12"
+
+authors = [
+    {name = "Christian Bator", email = "christian@bator.co"}
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+
+dependencies = [
+    "mypy",
+    "matplotlib",
+    "ffmpeg"
+]
+
+[project.urls]
+Homepage = "https://github.com/christianbator/pure-pursuit"
+
+[project.scripts]
+pure-pursuit = "pure_pursuit.pure_pursuit:main"

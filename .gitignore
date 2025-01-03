@@ -1,0 +1,21 @@
+#
+# .gitignore
+# pure-pursuit
+#
+# Created by Christian Bator on 01/02/2025
+#
+
+# Python
+__pycache__
+.mypy_cache
+
+# Paths
+paths/*
+!paths/coverage-path-2x3.json
+!paths/random-path-1.json
+
+# Simulation
+output/results/*.json
+
+# Animations
+output/animations/*.mp4

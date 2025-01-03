@@ -1,0 +1,11 @@
+{
+    "wheel_radius": 0.16,
+    "track_width": 0.60,
+    "length": 1.22,
+    "max_velocity": 1.75,
+    "max_acceleration": 0.2,
+    "max_angular_velocity": 0.785,
+    "max_angular_acceleration": 1.571,
+    "wheel_encoder_qpps": 2000,
+    "wheel_gear_ratio": 18.75
+}
