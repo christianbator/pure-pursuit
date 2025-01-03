@@ -27,8 +27,7 @@ classifiers = [
 
 dependencies = [
     "mypy",
-    "matplotlib",
-    "ffmpeg"
+    "matplotlib"
 ]
 
 [project.urls]

@@ -61,9 +61,9 @@ def main(max_x: int, max_y: int, output_dir: Path):
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-x", "--max_x", type = int)
-	parser.add_argument("-y", "--max_y", type = int)
-	parser.add_argument("-o", "--output_dir")
+	parser.add_argument("-x", "--max_x", type = int, required = True)
+	parser.add_argument("-y", "--max_y", type = int, required = True)
+	parser.add_argument("-o", "--output_dir", required = True)
 	args = parser.parse_args()
 
 	main(max_x = args.max_x, max_y = args.max_y, output_dir = Path(args.output_dir))

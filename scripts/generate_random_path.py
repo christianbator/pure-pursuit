@@ -82,8 +82,8 @@ def main(num_paths: int, output_dir: Path):
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-n", "--num_paths", type = int)
-	parser.add_argument("-o", "--output_dir")
+	parser.add_argument("-n", "--num_paths", type = int, required = True)
+	parser.add_argument("-o", "--output_dir", required = True)
 	args = parser.parse_args()
 
 	main(num_paths = args.num_paths, output_dir = Path(args.output_dir))
