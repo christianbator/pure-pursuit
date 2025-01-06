@@ -1,5 +1,5 @@
 #
-# robomower_config.py
+# robot_config.py
 # pure-pursuit
 #
 # Created by Christian Bator on 01/02/2025
@@ -10,9 +10,9 @@ from typing import Self
 from pure_pursuit.utilities.json_codable import JSON, JSONDecodable
 
 #
-# RobomowerConfig
+# RobotConfig
 #
-class RobomowerConfig(JSONDecodable):
+class RobotConfig(JSONDecodable):
 
     def __init__(
         self,

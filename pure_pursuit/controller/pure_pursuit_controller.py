@@ -10,7 +10,7 @@ from operator import itemgetter
 from math import inf, sqrt, fabs
 
 from pure_pursuit.config.pure_pursuit_config import PurePursuitConfig
-from pure_pursuit.model.robomower import Robomower, RobomowerPose, RobomowerCommand
+from pure_pursuit.model.robot import Robot, RobotPose, RobotCommand
 from pure_pursuit.utilities.math_extensions import end_index, is_float_within, inclusive_range, constrain, sgn
 from pure_pursuit.utilities.geometry import (
     PointProtocol,
@@ -28,19 +28,19 @@ from pure_pursuit.utilities.geometry import (
 
 class PurePursuitController:
 
-	def __init__(self, config: PurePursuitConfig, robomower: Robomower, path: Path):
+	def __init__(self, config: PurePursuitConfig, robot: Robot, path: Path):
 		# Configuration
 		self._min_look_ahead_distance = config.min_look_ahead_distance
 		self._max_look_ahead_distance = config.max_look_ahead_distance
 		self._final_approach_velocity = config.final_approach_velocity
 		self._end_condition_distance = config.end_condition_distance
 
-		self._max_velocity = robomower.max_velocity
-		self._max_acceleration = robomower.max_acceleration
-		self._max_angular_velocity = robomower.max_angular_velocity
-		self._max_angular_acceleration = robomower.max_angular_acceleration
-		self._track_width = robomower.track_width
-		self._wheel_radius = robomower.wheel_radius
+		self._max_velocity = robot.max_velocity
+		self._max_acceleration = robot.max_acceleration
+		self._max_angular_velocity = robot.max_angular_velocity
+		self._max_angular_acceleration = robot.max_angular_acceleration
+		self._track_width = robot.track_width
+		self._wheel_radius = robot.wheel_radius
 		self._path = path
 
 		# Reference point state
@@ -92,7 +92,7 @@ class PurePursuitController:
 	#
 	# Update
 	#
-	def update(self, pose: RobomowerPose, dt: float) -> RobomowerCommand:
+	def update(self, pose: RobotPose, dt: float) -> RobotCommand:
 		# Calculate look-ahead distance based on velocity
 		look_ahead_distance = self.calculate_look_ahead_distance(
 			path = self._path,
@@ -176,7 +176,7 @@ class PurePursuitController:
 	def calculate_look_ahead_distance(
 		self,
 		path: Path,
-		pose: RobomowerPose,
+		pose: RobotPose,
 		current_checkpoint_index: int,
 		max_velocity: float,
 		min_look_ahead_distance: float,
@@ -200,7 +200,7 @@ class PurePursuitController:
 	def next_target_point(
 		self,
 		path: Path,
-		pose: RobomowerPose,
+		pose: RobotPose,
 		current_checkpoint_index: int,
 		current_target_point: Optional[TargetPoint],
 		look_ahead_distance
@@ -338,7 +338,7 @@ class PurePursuitController:
 			target_velocity = target_velocity
 		))
 
-	def line_segment_circle_intersections(self, pose: RobomowerPose, point_1: PointProtocol, point_2: PointProtocol, look_ahead_distance: float) -> list[Point]:
+	def line_segment_circle_intersections(self, pose: RobotPose, point_1: PointProtocol, point_2: PointProtocol, look_ahead_distance: float) -> list[Point]:
 		"""
 		Returns a list of intersections between the line segment and circle defined by (center: pose.position, radius: look_ahead_distance)
 		"""
@@ -397,7 +397,7 @@ class PurePursuitController:
 	def next_reference_point(
 		self,
 		path: Path,
-		pose: RobomowerPose,
+		pose: RobotPose,
 		current_reference_point_index: int,
 		current_reference_point: ReferencePoint,
 		checkpoint_index: int
@@ -438,7 +438,7 @@ class PurePursuitController:
 	#
 	# Command Creation
 	#
-	def calculate_signed_curvature(self, pose: RobomowerPose, target_point: TargetPoint) -> float:
+	def calculate_signed_curvature(self, pose: RobotPose, target_point: TargetPoint) -> float:
 		"""
 		Radius of rotation: R = l^2 / 2·d
 		where l is distance to target point and d is orthogonal distance from target point to robot heading vector
@@ -461,7 +461,7 @@ class PurePursuitController:
 	def handle_end_conditions(
 		self,
 		path: Path,
-		pose: RobomowerPose,
+		pose: RobotPose,
 		target_point: TargetPoint,
 		final_approach_velocity: float,
 		end_condition_distance: float,
@@ -487,7 +487,7 @@ class PurePursuitController:
 
 		return (target_velocity, is_path_complete, distance_remaining)
 
-	def limit_velocity(self, pose: RobomowerPose, target_velocity: float, max_velocity: float, max_acceleration: float, dt: float) -> float:
+	def limit_velocity(self, pose: RobotPose, target_velocity: float, max_velocity: float, max_acceleration: float, dt: float) -> float:
 		limited_velocity = constrain(target_velocity, 0.0, max_velocity)
 
 		max_velocity_delta = max_acceleration * dt
@@ -497,7 +497,7 @@ class PurePursuitController:
 
 	def limit_angular_velocity(
 		self,
-		pose: RobomowerPose,
+		pose: RobotPose,
 		target_angular_velocity: float,
 		max_angular_velocity: float,
 		max_angular_acceleration: float,
@@ -513,7 +513,7 @@ class PurePursuitController:
 
 	def create_command(
 		self,
-		pose: RobomowerPose,
+		pose: RobotPose,
 		signed_curvature: float,
 		target_velocity: float,
 		max_velocity: float,
@@ -523,10 +523,10 @@ class PurePursuitController:
 		track_width: float,
 		wheel_radius: float,
 		dt: float
-	) -> RobomowerCommand:
+	) -> RobotCommand:
 
 		if self.is_path_complete:
-			return RobomowerCommand(
+			return RobotCommand(
 				right_wheel_angular_velocity = 0.0,
 				left_wheel_angular_velocity = 0.0
 			)
@@ -557,7 +557,7 @@ class PurePursuitController:
 		right_wheel_velocity = limited_velocity + 0.5 * limited_angular_velocity * track_width
 		left_wheel_velocity = limited_velocity - 0.5 * limited_angular_velocity * track_width
 
-		return RobomowerCommand(
+		return RobotCommand(
 			right_wheel_angular_velocity = right_wheel_velocity / wheel_radius,
 			left_wheel_angular_velocity = left_wheel_velocity / wheel_radius
 		)

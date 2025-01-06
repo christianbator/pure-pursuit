@@ -19,7 +19,7 @@ source .venv/bin/activate
 pip install .
 pure-pursuit -p paths/random-path-1.json \
              -s config/simulation-config.json \
-             -r config/robomower-config.json \
+             -r config/robot-config.json \
              -c config/pure-pursuit-config.json \
              --animate --follow --graphs
 ```
@@ -31,7 +31,7 @@ You can run pure pursuit simulations with or without animations and the cross tr
 ```
 pure-pursuit -p paths/random-path-1.json \
              -s config/simulation-config.json \
-             -r config/robomower-config.json \
+             -r config/robot-config.json \
              -c config/pure-pursuit-config.json
 ```
 
@@ -83,7 +83,7 @@ You can view the cross track error by passing the `--graphs` argument:
 ```
 pure-pursuit -p paths/random-path-1.json \
              -s config/simulation-config.json \
-             -r config/robomower-config.json \
+             -r config/robot-config.json \
              -c config/pure-pursuit-config.json \
              --graphs
 ```
@@ -98,7 +98,7 @@ You can view an animation of the simulation by passing the `--animate` argument.
 ```
 pure-pursuit -p paths/random-path-1.json \
              -s config/simulation-config.json \
-             -r config/robomower-config.json \
+             -r config/robot-config.json \
              -c config/pure-pursuit-config.json \
              --animate --follow
 ```
@@ -130,7 +130,7 @@ You can save the animation as an mp4 by passing the `--save-animation` argument 
 ```
 pure-pursuit -p paths/random-path-1.json \
              -s config/simulation-config.json \
-             -r config/robomower-config.json \
+             -r config/robot-config.json \
              -c config/pure-pursuit-config.json \
              --animate --follow --save-animation
 ```  

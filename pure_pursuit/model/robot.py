@@ -1,19 +1,19 @@
 #
-# robomower.py
+# robot.py
 # pure-pursuit
 #
 # Created by Christian Bator on 01/02/2025
 #
 
-from pure_pursuit.config.robomower_config import RobomowerConfig
+from pure_pursuit.config.robot_config import RobotConfig
 from pure_pursuit.utilities.geometry import Point
 
 #
-# Robomower
+# Robot
 #
-class Robomower:
+class Robot:
 
-    def __init__(self, config: RobomowerConfig):
+    def __init__(self, config: RobotConfig):
         self._wheel_radius = config.wheel_radius
         self._track_width = config.track_width
         self._length = config.length
@@ -51,9 +51,9 @@ class Robomower:
         return self._max_angular_acceleration
 
 #
-# RobomowerPose
+# RobotPose
 #
-class RobomowerPose:
+class RobotPose:
 
     def __init__(self, position: Point, heading: float, velocity: float, angular_velocity: float):
         self._position = position
@@ -77,19 +77,19 @@ class RobomowerPose:
     def angular_velocity(self) -> float:
         return self._angular_velocity
 
-    def right_wheel_angular_velocity(self, robomower: Robomower) -> float:
-        return (self.velocity + 0.5 * self.angular_velocity * robomower.track_width) / robomower.wheel_radius
+    def right_wheel_angular_velocity(self, robot: Robot) -> float:
+        return (self.velocity + 0.5 * self.angular_velocity * robot.track_width) / robot.wheel_radius
 
-    def left_wheel_angular_velocity(self, robomower: Robomower) -> float:
-        return (self.velocity - 0.5 * self.angular_velocity * robomower.track_width) / robomower.wheel_radius
+    def left_wheel_angular_velocity(self, robot: Robot) -> float:
+        return (self.velocity - 0.5 * self.angular_velocity * robot.track_width) / robot.wheel_radius
 
     def __str__(self) -> str:
         return f"(x: {self.position.x:0,.3f}, y: {self.position.y:0,.3f}, theta: {self.heading:0,.3f}, v: {self.velocity:0,.3f}, \u03C9: {self.angular_velocity:0,.3f})"
 
 #
-# RobomowerCommand
+# RobotCommand
 #
-class RobomowerCommand:
+class RobotCommand:
 
     def __init__(self, right_wheel_angular_velocity: float, left_wheel_angular_velocity: float):
         self._right_wheel_angular_velocity = right_wheel_angular_velocity

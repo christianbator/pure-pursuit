@@ -1,5 +1,4 @@
 {
-    "control_frequency": 50,
     "min_look_ahead_distance": 0.10,
     "max_look_ahead_distance": 1.00,
     "angle_velocity_parameter": 0.3,

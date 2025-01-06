@@ -12,7 +12,7 @@ from math import floor, ceil, cos, sin
 from pure_pursuit.simulation.simulation_data import SimulationData
 from pure_pursuit.animation.matplotlib_extensions import draw_point, draw_points, draw_line, draw_circle, calculate_circle_points
 from pure_pursuit.utilities.geometry import bounding_box, Point
-from pure_pursuit.model.robomower import Robomower
+from pure_pursuit.model.robot import Robot
 from pure_pursuit.controller.pure_pursuit_controller import PurePursuitController
 
 import matplotlib.pyplot as plot
@@ -32,7 +32,7 @@ class Animator:
     #
     def __init__(
             self,
-            robomower: Robomower,
+            robot: Robot,
             controller: PurePursuitController,
             simulation_data: SimulationData,
             path_name: str,
@@ -44,7 +44,7 @@ class Animator:
         path_bounds = bounding_box(simulation_data.path.waypoints)
 
         if follow:
-            buffer = max(max_look_ahead_diameter, max(robomower.length, robomower.track_width))
+            buffer = max(max_look_ahead_diameter, max(robot.length, robot.track_width))
             xlim = (initial_state.pose.position.x - buffer, initial_state.pose.position.x + buffer)
             ylim = (initial_state.pose.position.y - buffer, initial_state.pose.position.y + buffer)
         else:
@@ -79,7 +79,7 @@ class Animator:
 
         axes.grid(which = "major", alpha = 0.3)
 
-        self._robomower = robomower
+        self._robot = robot
         self._simulation_data = simulation_data
         self._follow = follow
         self._print_frame_number = print_frame_number
@@ -154,9 +154,9 @@ class Animator:
         )
 
         robot_frame = patches.Rectangle(
-            (self._initial_state.pose.position.x - 0.25 * self._robomower.length, self._initial_state.pose.position.y - 0.5 * self._robomower.track_width),
-            self._robomower.length,
-            self._robomower.track_width,
+            (self._initial_state.pose.position.x - 0.25 * self._robot.length, self._initial_state.pose.position.y - 0.5 * self._robot.track_width),
+            self._robot.length,
+            self._robot.track_width,
             linewidth = 1.5,
             edgecolor = ("tab:red", 0.3),
             facecolor = ("tab:red", 0.1),
@@ -258,12 +258,12 @@ class Animator:
 
             left_wheel_line.set_paths([[
                 (left_wheel_line_x, wheel_line_ymin),
-                (left_wheel_line_x, wheel_line_ymin + self._robomower.wheel_radius * left_wheel_angular_velocity / self._robomower.max_velocity * wheel_line_max_length)
+                (left_wheel_line_x, wheel_line_ymin + self._robot.wheel_radius * left_wheel_angular_velocity / self._robot.max_velocity * wheel_line_max_length)
             ]])
 
             right_wheel_line.set_paths([[
                 (right_wheel_line_x, wheel_line_ymin),
-                (right_wheel_line_x, wheel_line_ymin + self._robomower.wheel_radius * right_wheel_angular_velocity / self._robomower.max_velocity * wheel_line_max_length)
+                (right_wheel_line_x, wheel_line_ymin + self._robot.wheel_radius * right_wheel_angular_velocity / self._robot.max_velocity * wheel_line_max_length)
             ]])
 
             checkpoint_dot.set_xdata([self._simulation_data.path[state.checkpoint_index].x])
@@ -295,8 +295,8 @@ class Animator:
             robot_frame.set_transform(None)
 
             robot_frame.set_xy((
-                state.pose.position.x - 0.25 * self._robomower.length,
-                state.pose.position.y - 0.5 * self._robomower.track_width)
+                state.pose.position.x - 0.25 * self._robot.length,
+                state.pose.position.y - 0.5 * self._robot.track_width)
             )
 
             robot_frame_rotation = transforms.Affine2D().rotate_around(

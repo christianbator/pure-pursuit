@@ -9,20 +9,20 @@ from typing import Optional
 from math import cos, sin
 
 from pure_pursuit.utilities.geometry import Point
-from pure_pursuit.model.robomower import Robomower, RobomowerPose, RobomowerCommand
+from pure_pursuit.model.robot import Robot, RobotPose, RobotCommand
 
 #
 # Pose Propagation
 #
-def propagate_pose(robomower: Robomower, previous_pose: RobomowerPose, previous_command: Optional[RobomowerCommand], dt: float) -> RobomowerPose:
+def propagate_pose(robot: Robot, previous_pose: RobotPose, previous_command: Optional[RobotCommand], dt: float) -> RobotPose:
     if previous_command is None:
         return previous_pose
 
-    velocity = robomower.wheel_radius * (previous_command.right_wheel_angular_velocity + previous_command.left_wheel_angular_velocity) / 2.0
+    velocity = robot.wheel_radius * (previous_command.right_wheel_angular_velocity + previous_command.left_wheel_angular_velocity) / 2.0
 
-    angular_velocity = robomower.wheel_radius * (previous_command.right_wheel_angular_velocity - previous_command.left_wheel_angular_velocity) / robomower.track_width
+    angular_velocity = robot.wheel_radius * (previous_command.right_wheel_angular_velocity - previous_command.left_wheel_angular_velocity) / robot.track_width
 
-    return RobomowerPose(
+    return RobotPose(
         position = Point(
             x = previous_pose.position.x + cos(previous_pose.heading) * velocity * dt,
             y = previous_pose.position.y + sin(previous_pose.heading) * velocity * dt

@@ -8,7 +8,7 @@
 from typing import Optional
 from math import degrees, radians, fabs
 
-from pure_pursuit.model.robomower import Robomower, RobomowerPose, RobomowerCommand
+from pure_pursuit.model.robot import Robot, RobotPose, RobotCommand
 from pure_pursuit.controller.pure_pursuit_controller import PurePursuitController
 from pure_pursuit.utilities.math_extensions import is_float_less_or_equal, average
 from pure_pursuit.utilities.geometry import TargetPoint, ReferencePoint, Path, distance_between
@@ -21,13 +21,13 @@ class SimulationState:
 
     def __init__(
         self,
-        pose: RobomowerPose,
+        pose: RobotPose,
         reference_point: ReferencePoint,
         cross_track_error: float,
         checkpoint_index: int,
         look_ahead_distance: float,
         target_point: Optional[TargetPoint],
-        command: RobomowerCommand
+        command: RobotCommand
     ):
         self._pose = pose
         self._reference_point = reference_point
@@ -38,7 +38,7 @@ class SimulationState:
         self._command = command
     
     @property
-    def pose(self) -> RobomowerPose:
+    def pose(self) -> RobotPose:
         return self._pose
     
     @property
@@ -62,7 +62,7 @@ class SimulationState:
         return self._target_point
 
     @property
-    def command(self) -> RobomowerCommand:
+    def command(self) -> RobotCommand:
         return self._command
 
 #
@@ -72,14 +72,14 @@ class SimulationData:
 
     def __init__(
         self,
-        robomower: Robomower,
+        robot: Robot,
         controller: PurePursuitController,
         dt: float,
         path: Path,
         states: list[SimulationState],
         step_calculation_times_ns: list[float]
     ):
-        self._robomower = robomower
+        self._robot = robot
         self._controller = controller
         self._path = path
         self._states = states
@@ -151,7 +151,7 @@ class SimulationData:
         result += f"  > Average absolute cross track error: {cross_track_error_text}\n"
         result += f"  > Average velocity: {cyan(f'{self.average_velocity:0,.3f} m/s')}\n"
 
-        if is_float_less_or_equal(self.max_angular_velocity, self._robomower.max_angular_velocity):
+        if is_float_less_or_equal(self.max_angular_velocity, self._robot.max_angular_velocity):
             angular_speed_text = green(f"{self.max_angular_velocity:0,.3f} rad/s")
         else:
             angular_speed_text = bright_red(f"{self.max_angular_velocity:0,.3f} rad/s")

@@ -9,7 +9,7 @@ from time import time_ns
 from pathlib import Path
 
 from pure_pursuit.controller.pure_pursuit_controller import PurePursuitController
-from pure_pursuit.model.robomower import Robomower, RobomowerPose, RobomowerCommand
+from pure_pursuit.model.robot import Robot, RobotPose, RobotCommand
 from pure_pursuit.model.diff_drive_kinematics import propagate_pose
 from pure_pursuit.simulation.simulation_data import SimulationState, SimulationData
 from pure_pursuit.utilities.geometry import Path as GeoPath
@@ -24,13 +24,13 @@ class Simulator:
     #
     def __init__(
         self,
-        robomower: Robomower,
-        initial_pose: RobomowerPose,
+        robot: Robot,
+        initial_pose: RobotPose,
         controller: PurePursuitController,
         dt: float,
         path: GeoPath
     ):
-        self._robomower = robomower
+        self._robot = robot
         self._initial_pose = initial_pose
         self._controller = controller
         self._dt = dt
@@ -51,7 +51,7 @@ class Simulator:
             step_start_time_ns = time_ns()
 
             # Propagate pose from previous command
-            pose = propagate_pose(robomower = self._robomower, previous_pose = previous_pose, previous_command = previous_command, dt = self._dt)
+            pose = propagate_pose(robot = self._robot, previous_pose = previous_pose, previous_command = previous_command, dt = self._dt)
 
             # Receive a new command from the controller
             command = self._controller.update(pose = pose, dt = self._dt)
@@ -75,8 +75,8 @@ class Simulator:
             previous_command = command
 
         # Stop and append final state with velocity = 0.0
-        previous_command = RobomowerCommand(right_wheel_angular_velocity = 0.0, left_wheel_angular_velocity = 0.0)
-        final_pose = propagate_pose(robomower = self._robomower, previous_pose = previous_pose, previous_command = previous_command, dt = self._dt)
+        previous_command = RobotCommand(right_wheel_angular_velocity = 0.0, left_wheel_angular_velocity = 0.0)
+        final_pose = propagate_pose(robot = self._robot, previous_pose = previous_pose, previous_command = previous_command, dt = self._dt)
 
         states.append(
             SimulationState(
@@ -91,7 +91,7 @@ class Simulator:
         )
 
         simulation_data = SimulationData(
-            robomower = self._robomower,
+            robot = self._robot,
             controller = self._controller,
             dt = self._dt,
             path = self._path,

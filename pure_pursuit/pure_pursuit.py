@@ -10,12 +10,12 @@ from typing import Optional
 from argparse import ArgumentParser
 from pathlib import Path
 
-from pure_pursuit.config.robomower_config import RobomowerConfig
+from pure_pursuit.config.robot_config import RobotConfig
 from pure_pursuit.config.pure_pursuit_config import PurePursuitConfig
 from pure_pursuit.config.simulation_config import SimulationConfig
 from pure_pursuit.controller.pure_pursuit_controller import PurePursuitController
 from pure_pursuit.controller.path_adapter import PathAdapter
-from pure_pursuit.model.robomower import Robomower, RobomowerPose
+from pure_pursuit.model.robot import Robot, RobotPose
 from pure_pursuit.simulation.simulator import Simulator
 from pure_pursuit.animation.animator import Animator
 from pure_pursuit.plotting import plot_cross_track_errors
@@ -46,7 +46,7 @@ def main():
     required_named_arguments = parser.add_argument_group("required named arguments")
     required_named_arguments.add_argument("-p", "--path-filepath", required = True)
     required_named_arguments.add_argument("-s", "--simulation-config-filepath", required = True)
-    required_named_arguments.add_argument("-r", "--robomower-config-filepath", required = True)
+    required_named_arguments.add_argument("-r", "--robot-config-filepath", required = True)
     required_named_arguments.add_argument("-c", "--pure-pursuit-config-filepath", required = True)
     parser.add_argument("--animate", action = "store_true")
     parser.add_argument("--follow", action = "store_true")
@@ -64,13 +64,13 @@ def main():
         print("> Error: Invalid simulation config")
         exit(2)
 
-    robomower_config: Optional[RobomowerConfig] = None
-    with open(args.robomower_config_filepath) as robomower_config_file:
-        robomower_config_json = json.load(robomower_config_file)
-        robomower_config = RobomowerConfig.decode(robomower_config_json)
+    robot_config: Optional[RobotConfig] = None
+    with open(args.robot_config_filepath) as robot_config_file:
+        robot_config_json = json.load(robot_config_file)
+        robot_config = RobotConfig.decode(robot_config_json)
 
-    if not robomower_config:
-        print("> Error: Invalid robomower config")
+    if not robot_config:
+        print("> Error: Invalid robot config")
         exit(2)
 
     pure_pursuit_config: Optional[PurePursuitConfig] = None
@@ -94,16 +94,16 @@ def main():
 
     # Pre-process path by calculating target velocities based on configuration parameters and acceleration limits
     path = PathAdapter(raw_points = raw_points).adapt_path(
-        max_velocity = robomower_config.max_velocity,
-        max_acceleration = robomower_config.max_acceleration,
+        max_velocity = robot_config.max_velocity,
+        max_acceleration = robot_config.max_acceleration,
         angle_velocity_parameter = pure_pursuit_config.angle_velocity_parameter
     )
 
     # Create robot
-    robomower = Robomower(config = robomower_config)
+    robot = Robot(config = robot_config)
     
     # Set initial pose to the first point on the path
-    initial_pose = RobomowerPose(
+    initial_pose = RobotPose(
         position = raw_points[0],
         heading = line_segment_angle([raw_points[0], raw_points[1]]),
         velocity = 0.0,
@@ -111,7 +111,7 @@ def main():
     )
 
     # Create controller
-    controller = PurePursuitController(config = pure_pursuit_config, robomower = robomower, path = path)
+    controller = PurePursuitController(config = pure_pursuit_config, robot = robot, path = path)
     
     #
     # Simulate
@@ -119,7 +119,7 @@ def main():
     dt = 1.0 / simulation_config.control_frequency
 
     simulator = Simulator(
-        robomower = robomower,
+        robot = robot,
         initial_pose = initial_pose,
         controller = controller,
         dt = dt,
@@ -160,7 +160,7 @@ def main():
 
     if args.animate:
         animator = Animator(
-            robomower = robomower,
+            robot = robot,
             controller = controller,
             simulation_data = simulation_data,
             path_name = path_name,
