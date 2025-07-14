@@ -207,7 +207,7 @@ RobotCommand
   right_wheel_angular_velocity: float
   left_wheel_angular_velocity: float
 ```
-The controller computes the command based on the path geometry, the robot's current pose, and the constraints defined by the configuration parameters. The high-lvel steps are:
+The controller computes the command based on the path geometry, the robot's current pose, and the constraints defined by the configuration parameters. The high-level steps are:
 1. Calculate look-ahead distance based on current velocity
 1. Search for next target point
 1. Calculate target velocity at next target point
