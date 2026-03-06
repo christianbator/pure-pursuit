@@ -251,7 +251,7 @@ class PurePursuitController:
 		#   - Find first segment whose end point is at least `look_ahead_distance` away
 		#   - Either a further along intersection exists on this segment,
 		#     or we have an intersection that moves the target point backwards (maintain current target point in this case),
-		#     - or we must choose the segment end point
+		#     or we must choose the segment end point
 		for index in range(current_checkpoint_index + 1, len(path)):
 			waypoint = path[index]
 			previous_waypoint = path[index - 1]
